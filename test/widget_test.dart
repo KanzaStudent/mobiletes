@@ -1,30 +1,46 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:latkuis/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('login demo membuka aplikasi dengan kredensial yang benar', (
+    tester,
+  ) async {
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.enterText(find.byType(TextField).at(0), 'admin');
+    await tester.enterText(find.byType(TextField).at(1), 'admin123');
+    await tester.tap(find.text('Masuk'));
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.text('Menu'), findsOneWidget);
+    expect(find.text('Favorit'), findsOneWidget);
+    expect(find.text('Profil'), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('menu dapat difavoritkan dan pengguna dapat logout', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+    await tester.enterText(find.byType(TextField).at(0), 'admin');
+    await tester.enterText(find.byType(TextField).at(1), 'admin123');
+    await tester.tap(find.text('Masuk'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Tambahkan ke favorit').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Favorit'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Menu Favorit'), findsOneWidget);
+    expect(find.text('Nasi Goreng'), findsOneWidget);
+
+    await tester.tap(find.text('Profil'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Keluar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Masuk ke Menu Resto'), findsOneWidget);
   });
 }
